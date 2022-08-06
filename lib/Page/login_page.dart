@@ -14,14 +14,12 @@ class LoginPage extends StatelessWidget {
     return const MaterialApp(
       home: SafeArea(
         child: Scaffold(
-
           body: LoginState(),
         ),
       ),
     );
   }
 }
-
 
 class LoginState extends StatefulWidget {
   const LoginState({Key? key}) : super(key: key);
@@ -33,14 +31,14 @@ class LoginState extends StatefulWidget {
 class _LoginStateState extends State<LoginState> {
   @override
   Widget build(BuildContext context) {
+    var screenHeight = MediaQuery.of(context).size.height;
+    var screenWidth = MediaQuery.of(context).size.width;
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
           body: Padding(
             padding: EdgeInsets.all(fullPadding),
-            child: Center(
 
-            ),
           ),
         ),
       ),
