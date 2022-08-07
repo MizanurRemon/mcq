@@ -5,12 +5,12 @@ import 'Constants.dart';
 import 'package:dio/dio.dart';
 
 class ApiServices {
-  var dio = Dio();
+
   Toast_alert toastAlert = Toast_alert(); // with default Options
 
   Future<Login_response> loginUser(String phone, String password) async {
     //var dio = Dio();
-
+    var dio = Dio();
     final response = await dio.post("${Constants().BASE_URL}/admin/admin_login",
         data: json.encode({'phone': phone, 'password': password}));
 
@@ -23,10 +23,16 @@ class ApiServices {
       //successToast(login_response.data?.adminID.toString());
       if (loginResponse.status == 1) {
         toastAlert.successToast(loginResponse.message);
+
+        Map<String, dynamic> data = new Map<String, dynamic>.from(json.decode(response.data));
+
+        print(data['message `']);
       } else {
         toastAlert.errorToast(loginResponse.message);
       }
-      return Login_response.fromJson(jsonDecode(response.data));
+
+
+      return Login_response.fromJson(json.decode(response.data));
       //String responseString = response.body;
       //successToast(responseString);
     } else {
