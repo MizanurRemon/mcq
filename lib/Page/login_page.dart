@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mcq/API/Api_services.dart';
+import 'package:mcq/Page/Home_page.dart';
 import 'package:mcq/Toast/Toast_alert.dart';
+import '../Model/Login/Login_response.dart';
+import '../Sessions/Session_management.dart';
 
 Toast_alert toastAlert = Toast_alert();
+Session_management session_management = Session_management();
 var fullPadding = 10.0;
+var userID;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,6 +21,16 @@ class LoginPage extends StatefulWidget {
 class _LoginStateState extends State<LoginPage> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    //checkSession();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +130,30 @@ class _LoginStateState extends State<LoginPage> {
                                             //Login_response response = Api_services().loginUser(phone, password) as Login_response;
                                             setState(() {
                                               ApiServices()
-                                                  .loginUser(phone, password);
+                                                  .loginUser(phone, password)
+                                                  .then((value) {
+                                                Login_response response =
+                                                    Login_response.fromJson(
+                                                        value);
+                                                //toastAlert.successToast(response.message);
+                                                if (response.status == 1) {
+                                                  toastAlert.successToast(
+                                                      response.message);
+                                                  session_management.saveUserID(
+                                                      response.data?.adminID
+                                                          .toString());
+
+                                                  Navigator.of(context)
+                                                      .pushNamedAndRemoveUntil(
+                                                          '/home_page',
+                                                          (Route<dynamic>
+                                                                  route) =>
+                                                              false);
+                                                } else {
+                                                  toastAlert.errorToast(
+                                                      response.message);
+                                                }
+                                              });
                                             });
                                           }
                                         },

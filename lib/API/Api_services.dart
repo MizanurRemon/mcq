@@ -8,31 +8,33 @@ class ApiServices {
 
   Toast_alert toastAlert = Toast_alert(); // with default Options
 
-  Future<Login_response> loginUser(String phone, String password) async {
+  Future<Map<String, dynamic>> loginUser(String phone, String password) async {
     //var dio = Dio();
     var dio = Dio();
     final response = await dio.post("${Constants().BASE_URL}/admin/admin_login",
         data: json.encode({'phone': phone, 'password': password}));
 
-    Login_response loginResponse = Login_response.fromJson(response.data);
+
+
+    //Login_response loginResponse = Login_response.fromJson(response.data);
     if (response.statusCode == 200) {
       // If the server did return a 201 CREATED response,
       // then parse the JSON.
       //Login_response login_response = data as Login_response;
       //login_response.message = jsonDecode(data);
       //successToast(login_response.data?.adminID.toString());
-      if (loginResponse.status == 1) {
-        toastAlert.successToast(loginResponse.message);
+      /*if (loginResponse.status == 1) {
+        //toastAlert.successToast(loginResponse.message);
 
-        Map<String, dynamic> data = new Map<String, dynamic>.from(json.decode(response.data));
 
-        print(data['message `']);
+
+        //toastAlert.successToast(data['message']);
       } else {
         toastAlert.errorToast(loginResponse.message);
-      }
+      }*/
+      Map<String, dynamic> data =  Map<String, dynamic>.from(response.data);
 
-
-      return Login_response.fromJson(json.decode(response.data));
+      return data;
       //String responseString = response.body;
       //successToast(responseString);
     } else {
