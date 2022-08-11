@@ -4,7 +4,7 @@ import 'package:mcq/Page/SplashPage.dart';
 import 'login_page.dart';
 import '../Sessions/Session_management.dart';
 
-Session_management session_management = Session_management();
+//Session_management session_management = Session_management();
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  setInitialRoute() async{
+  /*setInitialRoute() async{
     var initRoute;
     var userID = await session_management.getUserID();
     if(userID != null){
@@ -38,5 +38,5 @@ class MyApp extends StatelessWidget {
     }
 
     return initRoute;
-  }
+  }*/
 }

@@ -38,7 +38,69 @@ class _Home_PageState extends State<Home_Page> {
           "MCQ",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                session_management.removeUser();
+
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/login_page', (Route<dynamic> route) => false);
+              },
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ))
+        ],
       ),
+      drawer: const NavigationDrawer(),
     );
   }
+}
+
+class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Drawer(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              buildHeader(context),
+              buildMenuItems(context),
+            ],
+          ),
+        ),
+      );
+
+  buildHeader(BuildContext context) => Container(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+        ),
+      );
+
+  buildMenuItems(BuildContext context) => Column(
+        children: [
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text("Profile"),
+            onTap: () {
+              Navigator.pop(context);
+              toast_alert.successToast("Profile");
+            },
+          ),
+          const Divider(
+            color: Colors.black,
+          ),
+          ListTile(
+            leading: Icon(Icons.logout),
+            title: Text("Log Out"),
+            onTap: () {
+              Navigator.pop(context);
+              toast_alert.successToast("log out");
+            },
+          )
+        ],
+      );
 }
