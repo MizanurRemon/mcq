@@ -3,7 +3,6 @@ import 'package:mcq/Page/Home_page.dart';
 import 'package:mcq/Page/SplashPage.dart';
 import 'package:mcq/Page/Add_subject_page.dart';
 import 'login_page.dart';
-import '../Sessions/Session_management.dart';
 
 //Session_management session_management = Session_management();
 
