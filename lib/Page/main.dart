@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mcq/Page/Home_page.dart';
 import 'package:mcq/Page/SplashPage.dart';
+import 'package:mcq/Page/Add_subject_page.dart';
 import 'login_page.dart';
 import '../Sessions/Session_management.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         "/login_page": (context) => const LoginPage(),
         "/home_page": (context) => const Home_Page(),
         "/splash_page": (context) => const SplashPage(),
+        "/add_subject_page": (context) => const Add_subject_page(),
       },
     );
   }
