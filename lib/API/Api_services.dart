@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'package:mcq/Model/Subject/Data.dart';
 import 'package:mcq/Page/Home_page.dart';
 import 'package:mcq/Toast/Toast_alert.dart';
+import '../Model/Job.dart';
+import '../Model/Subject/Subject_response.dart';
 import '../Utils/Constants.dart';
 import 'package:dio/dio.dart';
 
@@ -30,30 +33,25 @@ class ApiServices {
     }
   }
 
-  /*Future<SubjectResponse> getSubjectList() async {
+  Future<List<Data>> getSubjectList() async {
     final response =
         await dio.post("${Constants().BASE_URL}/admin/get_subject");
 
     if (response.statusCode == 200) {
-      SubjectResponse subjectResponse = SubjectResponse.fromJson(response.data);
+      List dataResponse = json.decode(response.data['data']);
 
-      //String responseString = response.body;
+      print(dataResponse.toString());
 
-      //var jsonData = json.decode(subjectResponse.data);
-      List<Data> data = [];
-
-
-      print(subjectResponse.data?.length.toString());
-      return subjectResponse;
+      return dataResponse.map((data) => Data.fromJson(data)).toList();
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       //toastAlert.errorToast("error");
-      throw Exception('Failed to create album.');
+      throw Exception('Failed to load jobs from API');
     }
-  }*/
+  }
 
-  Future<Map<String, dynamic>> getSubjectList() async {
+/*Future<Map<String, dynamic>> getSubjectList() async {
     final response =
         await dio.post("${Constants().BASE_URL}/admin/get_subject");
 
@@ -71,6 +69,24 @@ class ApiServices {
       // then throw an exception.
       //toastAlert.errorToast("error");
       throw Exception('Failed to create album.');
+    }
+  }*/
+
+  Future<List<Job>> fetchJobs() async {
+    final jobsListAPIUrl = 'https://mock-json-service.glitch.me/';
+    final response = await dio.get(jobsListAPIUrl);
+
+    if (response.statusCode == 200) {
+      //List jsonResponse = json.decode(response.data);
+      //return jsonResponse.map<Job>((job) => new Job.fromJson(job)).toList();
+      var data = json.decode(response.data);
+      List<Job> itemList = [];
+      data.map((item) {
+        itemList.add(Job.fromJson(item));
+      }).toList();
+      return itemList;
+    } else {
+      throw Exception('Failed to load jobs from API');
     }
   }
 }

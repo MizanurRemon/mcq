@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mcq/API/Api_services.dart';
+import 'package:mcq/Model/Job.dart';
 import 'package:mcq/Sessions/Session_management.dart';
 import 'package:mcq/Toast/Toast_alert.dart';
 import 'package:mcq/Utils/Constants.dart';
@@ -23,7 +24,7 @@ class Home_Page extends StatefulWidget {
 }
 
 class _Home_PageState extends State<Home_Page> {
-  SubjectResponse subjectList = SubjectResponse();
+  //SubjectResponse subjectList = SubjectResponse();
 
   @override
   void initState() {
@@ -31,7 +32,19 @@ class _Home_PageState extends State<Home_Page> {
 
     getSession().then((value) {});
 
-    print(subjectList.toString());
+    //print(subjectList.toString());
+  }
+
+  Future<List<Job>> fetchJobs() async {
+    final jobsListAPIUrl = 'https://mock-json-service.glitch.me/';
+    final response = await dio.get(jobsListAPIUrl);
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.data);
+      return jsonResponse.map((job) => new Job.fromJson(job)).toList();
+    } else {
+      throw Exception('Failed to load jobs from API');
+    }
   }
 
   getSession() async {
@@ -50,7 +63,7 @@ class _Home_PageState extends State<Home_Page> {
     return nameData;
   }
 
-  Future<List<String>> get_data() async {
+  /*Future<List<String>> get_data() async {
     ApiServices().getSubjectList().then((value) {
       SubjectResponse response = SubjectResponse.fromJson(value);
       //toast_alert.successToast(response.status.toString());
@@ -73,12 +86,18 @@ class _Home_PageState extends State<Home_Page> {
     });
 
     return nameData;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
-    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    var screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -109,40 +128,35 @@ class _Home_PageState extends State<Home_Page> {
                 ),
                 Container(
                   height: screenHeight,
-                  child: FutureBuilder(
-                      future: get_data(),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          //toast_alert.successToast(snapshot.data.length.toString());
+                  /*child: FutureBuilder<List<Data>>(
+                    future: ApiServices().getSubjectList(),
+                    builder: (context,AsyncSnapshot<List<Data>> snapshot) {
+                      if (snapshot.hasData) {
+                        List<Data>? data = snapshot.data;
 
-                          // var list = json.decode(snapshot.data.toString());
-
-                          return ListView.builder(
-                              itemCount: 5,
-                              itemBuilder: (context, int index) {
-                                return Container(
-                                  child: Card(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(20.0),
-                                      child: Text(
-                                        "hello", //data![index].toString(),
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              });
-                        } else {
-                          toast_alert.errorToast("data not found");
-                          return Container(
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-                      }),
+                        return ListView.builder(
+                            itemCount: data!.length,
+                            itemBuilder: (context, index) {
+                              return Text(data[index].subTitle.toString());
+                            });
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+                      return CircularProgressIndicator();
+                    },
+                  ),*/
+                  child: FutureBuilder<List<Job>>(
+                    future: ApiServices().fetchJobs(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        List<Job> data = snapshot.data as List<Job>;
+                        return _jobsListView(data);
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+                      return CircularProgressIndicator();
+                    },
+                  ),
                 ),
               ],
             ),
@@ -153,12 +167,8 @@ class _Home_PageState extends State<Home_Page> {
         padding: EdgeInsets.all(10.0),
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context)
-                .pushNamedAndRemoveUntil(
-                '/add_subject_page',
-                    (Route<dynamic>
-                route) =>
-                true);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/add_subject_page', (Route<dynamic> route) => true);
           },
           backgroundColor: Colors.blueGrey,
           child: const Icon(Icons.add),
@@ -169,11 +179,21 @@ class _Home_PageState extends State<Home_Page> {
   }
 }
 
+ListView _jobsListView(data) {
+  return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return Text(data[index].position,
+            semanticsLabel: data[index].company.toString());
+      });
+}
+
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Drawer(
+  Widget build(BuildContext context) =>
+      Drawer(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -185,7 +205,8 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  buildHeader(BuildContext context) => Container(
+  buildHeader(BuildContext context) =>
+      Container(
         color: Colors.yellow,
         height: 200,
         child: Padding(
@@ -199,7 +220,8 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  buildMenuItems(BuildContext context) => Column(
+  buildMenuItems(BuildContext context) =>
+      Column(
         children: [
           ListTile(
             leading: Icon(Icons.person),

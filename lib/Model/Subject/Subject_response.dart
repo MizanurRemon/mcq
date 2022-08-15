@@ -4,7 +4,7 @@ import 'dart:convert';
 /// status : 0
 /// data : [{"subjectID":8,"sub_title":"বাংলা 2","created_at":"2022-07-30 01:14:33","updated_at":"2022-07-30 01:15:19"},{"subjectID":9,"sub_title":"English","created_at":"2022-07-30 01:08:56","updated_at":"2022-07-30 01:08:56"},{"subjectID":10,"sub_title":"Geology","created_at":"2022-07-30 01:10:49","updated_at":"2022-07-30 01:10:49"}]
 
-SubjectResponse subjectResponseFromJson(String str) =>
+/*SubjectResponse subjectResponseFromJson(String str) =>
     SubjectResponse.fromJson(json.decode(str));
 
 String subjectResponseToJson(SubjectResponse data) =>
@@ -37,4 +37,4 @@ class SubjectResponse {
     }
     return map;
   }
-}
+}*/
