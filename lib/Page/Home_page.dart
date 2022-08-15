@@ -32,7 +32,7 @@ class _Home_PageState extends State<Home_Page> {
 
     getSession().then((value) {});
 
-    ApiServices().getSubjectList();
+    //ApiServices().getSubjectList();
     //get_data();
   }
 
@@ -107,7 +107,7 @@ class _Home_PageState extends State<Home_Page> {
                 ),
                 Container(
                   height: screenHeight,
-                  child: FutureBuilder<List<Data>>(
+                  /*child: FutureBuilder<List<Data>>(
                     future: ApiServices().getSubjectList(),
                     builder: (context,  snapshot) {
                       if (snapshot.hasData) {
@@ -123,8 +123,8 @@ class _Home_PageState extends State<Home_Page> {
                       }
                       return CircularProgressIndicator();
                     },
-                  ),
-                  /*child: FutureBuilder<List<Job>>(
+                  ),*/
+                  child: FutureBuilder<List<Job>>(
                     future: ApiServices().fetchJobs(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -133,9 +133,9 @@ class _Home_PageState extends State<Home_Page> {
                       } else if (snapshot.hasError) {
                         return Text("${snapshot.error}");
                       }
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     },
-                  ),*/
+                  ),
                 ),
               ],
             ),

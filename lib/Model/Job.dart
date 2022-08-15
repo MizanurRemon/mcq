@@ -6,7 +6,7 @@ class Job {
 
   Job({this.id, this.position, this.company, this.description});
 
-  factory Job.fromJson(Map<String, dynamic> json) {
+  factory Job.fromJson(Map<dynamic, dynamic> json) {
     return Job(
       id: json['id'],
       position: json['position'],

@@ -22,7 +22,7 @@ class Data {
     this.updatedAt,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) {
+  factory Data.fromJson(Map<dynamic, dynamic> json) {
     return Data(
         subjectID: json['subjectID'],
         subTitle: json['sub_title'],

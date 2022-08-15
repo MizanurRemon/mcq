@@ -40,19 +40,12 @@ class ApiServices {
     print(response.toString());
 
     if (response.statusCode == 200) {
-      List<Data> dataResponse = json.decode(response.data);
+      //List<Data> dataResponse = json.decode(response.data);
 
-      /*var data = json.decode(response.data['data']);
+      List jsonResponse = json.decode(response.data);
+      return jsonResponse.map<Data>((job) => new Data.fromJson(job)).toList();
 
-      print(data.toString());
-      List<Data> itemList = [];
-      data.map((data) {
-        itemList.add(Data.fromJson(data));
-      }).toList();
-
-      //return itemList;*/
-
-      return dataResponse;
+      //return jsonResponse;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
