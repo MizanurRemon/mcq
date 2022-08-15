@@ -4,11 +4,7 @@ class Job {
   final String? company;
   final String? description;
 
-  Job(
-      { this.id,
-       this.position,
-       this.company,
-       this.description});
+  Job({this.id, this.position, this.company, this.description});
 
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(

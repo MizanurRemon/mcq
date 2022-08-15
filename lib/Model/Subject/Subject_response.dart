@@ -1,40 +1,50 @@
-import 'Data.dart';
-import 'dart:convert';
-
-/// status : 0
-/// data : [{"subjectID":8,"sub_title":"বাংলা 2","created_at":"2022-07-30 01:14:33","updated_at":"2022-07-30 01:15:19"},{"subjectID":9,"sub_title":"English","created_at":"2022-07-30 01:08:56","updated_at":"2022-07-30 01:08:56"},{"subjectID":10,"sub_title":"Geology","created_at":"2022-07-30 01:10:49","updated_at":"2022-07-30 01:10:49"}]
-
-/*SubjectResponse subjectResponseFromJson(String str) =>
-    SubjectResponse.fromJson(json.decode(str));
-
-String subjectResponseToJson(SubjectResponse data) =>
-    json.encode(data.toJson());
-
 class SubjectResponse {
-  SubjectResponse({
-    this.status,
-    this.data,
-  });
+  int? status;
+  List<subData>? data;
 
-  SubjectResponse.fromJson(dynamic json) {
+  SubjectResponse({this.status, this.data});
+
+  SubjectResponse.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     if (json['data'] != null) {
-      data = [];
+      data = <subData>[];
       json['data'].forEach((v) {
-        data?.add(Data.fromJson(v));
+        data!.add(new subData.fromJson(v));
       });
     }
   }
 
-  num? status;
-  List<Data>? data;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class subData {
+  int? subjectID;
+  String? subTitle;
+  String? createdAt;
+  String? updatedAt;
+
+  subData({this.subjectID, this.subTitle, this.createdAt, this.updatedAt});
+
+  subData.fromJson(Map<String, dynamic> json) {
+    subjectID = json['subjectID'];
+    subTitle = json['sub_title'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
+  }
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['status'] = status;
-    if (data != null) {
-      map['data'] = data?.map((v) => v.toJson()).toList();
-    }
-    return map;
+    final Map<String, dynamic> data =  Map<String, dynamic>();
+    data['subjectID'] = subjectID;
+    data['sub_title'] = subTitle;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    return data;
   }
-}*/
+}

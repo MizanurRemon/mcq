@@ -32,7 +32,8 @@ class _Home_PageState extends State<Home_Page> {
 
     getSession().then((value) {});
 
-    //print(subjectList.toString());
+    ApiServices().getSubjectList();
+    //get_data();
   }
 
   Future<List<Job>> fetchJobs() async {
@@ -50,7 +51,6 @@ class _Home_PageState extends State<Home_Page> {
   getSession() async {
     userID = await session_management.getUserID();
 
-    //get_data();
     return;
   }
 
@@ -63,41 +63,20 @@ class _Home_PageState extends State<Home_Page> {
     return nameData;
   }
 
-  /*Future<List<String>> get_data() async {
-    ApiServices().getSubjectList().then((value) {
+  get_data() async {
+    ApiServices().getSubjectList2().then((value) {
       SubjectResponse response = SubjectResponse.fromJson(value);
-      //toast_alert.successToast(response.status.toString());
-      List<Data> data = response.data!;
 
-      //print(response.data.toString());
-      //List<String> nameData = [];
-      for (var i = 0; i < data.length; i++) {
-        //print(data[i].subTitle.toString());
-        //getData(data[i].subTitle.toString());
-        nameData.add(data[i].subTitle.toString());
+      print("Loaded Data: " + response.toString());
 
-        //toast_alert.successToast(nameData[i].toString());
-      }
-
-      //Future.delayed(const Duration(seconds: 2), () {});
-      print("size " + nameData.length.toString());
-      //print(data[1].subTitle.toString());
-      //return nameData;
+      return response;
     });
-
-    return nameData;
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var screenHeight = MediaQuery.of(context).size.height;
+    var screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -128,14 +107,14 @@ class _Home_PageState extends State<Home_Page> {
                 ),
                 Container(
                   height: screenHeight,
-                  /*child: FutureBuilder<List<Data>>(
+                  child: FutureBuilder<List<Data>>(
                     future: ApiServices().getSubjectList(),
-                    builder: (context,AsyncSnapshot<List<Data>> snapshot) {
+                    builder: (context,  snapshot) {
                       if (snapshot.hasData) {
-                        List<Data>? data = snapshot.data;
+                        List<Data>? data = snapshot.data as List<Data>;
 
                         return ListView.builder(
-                            itemCount: data!.length,
+                            itemCount: data.length,
                             itemBuilder: (context, index) {
                               return Text(data[index].subTitle.toString());
                             });
@@ -144,8 +123,8 @@ class _Home_PageState extends State<Home_Page> {
                       }
                       return CircularProgressIndicator();
                     },
-                  ),*/
-                  child: FutureBuilder<List<Job>>(
+                  ),
+                  /*child: FutureBuilder<List<Job>>(
                     future: ApiServices().fetchJobs(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
@@ -156,7 +135,7 @@ class _Home_PageState extends State<Home_Page> {
                       }
                       return CircularProgressIndicator();
                     },
-                  ),
+                  ),*/
                 ),
               ],
             ),
@@ -192,8 +171,7 @@ class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) =>
-      Drawer(
+  Widget build(BuildContext context) => Drawer(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -205,8 +183,7 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  buildHeader(BuildContext context) =>
-      Container(
+  buildHeader(BuildContext context) => Container(
         color: Colors.yellow,
         height: 200,
         child: Padding(
@@ -220,8 +197,7 @@ class NavigationDrawer extends StatelessWidget {
         ),
       );
 
-  buildMenuItems(BuildContext context) =>
-      Column(
+  buildMenuItems(BuildContext context) => Column(
         children: [
           ListTile(
             leading: Icon(Icons.person),

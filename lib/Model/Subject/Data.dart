@@ -5,12 +5,11 @@ import 'dart:convert';
 /// created_at : "2022-07-30 01:14:33"
 /// updated_at : "2022-07-30 01:15:19"
 
-//Data dataFromJson(String str) => Data.fromJson(json.decode(str));
+Data dataFromJson(String str) => Data.fromJson(json.decode(str));
 
-//String dataToJson(Data data) => json.encode(data.toJson());
+String dataToJson(Data data) => json.encode(data.toJson());
 
 class Data {
-
   num? subjectID;
   String? subTitle;
   String? createdAt;
@@ -23,30 +22,21 @@ class Data {
     this.updatedAt,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json){
+  factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
-      subjectID: json['subjectID'],
-      subTitle: json['sub_title'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at']
-    );
+        subjectID: json['subjectID'],
+        subTitle: json['sub_title'],
+        createdAt: json['created_at'],
+        updatedAt: json['updated_at']);
   }
-
-  /*Data.fromJson(dynamic json) {
-    subjectID = json['subjectID'];
-    subTitle = json['sub_title'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-
 
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['subjectID'] = subjectID;
-    map['sub_title'] = subTitle;
-    map['created_at'] = createdAt;
-    map['updated_at'] = updatedAt;
-    return map;
-  }*/
+    final data = <String, dynamic>{};
+    data['subjectID'] = this.subjectID;
+    data['sub_title'] = this.subTitle;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+
+    return data;
+  }
 }

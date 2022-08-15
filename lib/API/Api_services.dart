@@ -37,21 +37,32 @@ class ApiServices {
     final response =
         await dio.post("${Constants().BASE_URL}/admin/get_subject");
 
+    print(response.toString());
+
     if (response.statusCode == 200) {
-      List dataResponse = json.decode(response.data['data']);
+      List<Data> dataResponse = json.decode(response.data);
 
-      print(dataResponse.toString());
+      /*var data = json.decode(response.data['data']);
 
-      return dataResponse.map((data) => Data.fromJson(data)).toList();
+      print(data.toString());
+      List<Data> itemList = [];
+      data.map((data) {
+        itemList.add(Data.fromJson(data));
+      }).toList();
+
+      //return itemList;*/
+
+      return dataResponse;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       //toastAlert.errorToast("error");
+      print('Failed to load jobs from API');
       throw Exception('Failed to load jobs from API');
     }
   }
 
-/*Future<Map<String, dynamic>> getSubjectList() async {
+  Future<Map<String, dynamic>> getSubjectList2() async {
     final response =
         await dio.post("${Constants().BASE_URL}/admin/get_subject");
 
@@ -61,16 +72,16 @@ class ApiServices {
       //print(data['data'].toString());
 
       var dataList = data['data'];
-      print("data " + dataList.toString());
+      print(data.toString());
 
-      return data['data'];
+      return data;
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
       //toastAlert.errorToast("error");
       throw Exception('Failed to create album.');
     }
-  }*/
+  }
 
   Future<List<Job>> fetchJobs() async {
     final jobsListAPIUrl = 'https://mock-json-service.glitch.me/';
@@ -80,6 +91,9 @@ class ApiServices {
       //List jsonResponse = json.decode(response.data);
       //return jsonResponse.map<Job>((job) => new Job.fromJson(job)).toList();
       var data = json.decode(response.data);
+
+      print(data.toString());
+
       List<Job> itemList = [];
       data.map((item) {
         itemList.add(Job.fromJson(item));
