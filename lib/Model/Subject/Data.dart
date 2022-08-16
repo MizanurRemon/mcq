@@ -5,15 +5,15 @@ import 'dart:convert';
 /// created_at : "2022-07-30 01:14:33"
 /// updated_at : "2022-07-30 01:15:19"
 
-Data dataFromJson(String str) => Data.fromJson(json.decode(str));
+//Data dataFromJson(String str) => Data.fromJson(json.decode(str));
 
-String dataToJson(Data data) => json.encode(data.toJson());
+//String dataToJson(Data data) => json.encode(data.toJson());
 
 class Data {
-  num? subjectID;
-  String? subTitle;
-  String? createdAt;
-  String? updatedAt;
+  final int? subjectID;
+  final String? subTitle;
+  final String? createdAt;
+  final String? updatedAt;
 
   Data({
     this.subjectID,
@@ -22,7 +22,7 @@ class Data {
     this.updatedAt,
   });
 
-  factory Data.fromJson(Map<dynamic, dynamic> json) {
+  factory Data.fromJson(Map<String, dynamic> json) {
     return Data(
         subjectID: json['subjectID'],
         subTitle: json['sub_title'],

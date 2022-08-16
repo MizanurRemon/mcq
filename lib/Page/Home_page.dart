@@ -1,14 +1,19 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:mcq/API/Api_services.dart';
-import 'package:mcq/Model/Job.dart';
+import 'package:mcq/Model/Common/Common_response.dart';
+import 'package:mcq/Provider/DataProvider.dart';
 import 'package:mcq/Sessions/Session_management.dart';
 import 'package:mcq/Toast/Toast_alert.dart';
 import 'package:mcq/Utils/Constants.dart';
-import '../Model/Subject/Subject_response.dart';
+import 'package:zoom_tap_animation/zoom_tap_animation.dart';
 import '../Model/Subject/Data.dart';
+import 'package:provider/provider.dart';
+
+import 'package:shaky_animated_listview/animators/grid_animator.dart';
+import 'package:shaky_animated_listview/animators/shake_transition.dart';
+import 'package:shaky_animated_listview/scroll_animator.dart';
+import 'package:shaky_animated_listview/widgets/animated_gridview.dart';
+import 'package:shaky_animated_listview/widgets/animated_listview.dart';
 
 Toast_alert toast_alert = Toast_alert();
 Session_management session_management = Session_management();
@@ -31,21 +36,6 @@ class _Home_PageState extends State<Home_Page> {
     super.initState();
 
     getSession().then((value) {});
-
-    //ApiServices().getSubjectList();
-    //get_data();
-  }
-
-  Future<List<Job>> fetchJobs() async {
-    final jobsListAPIUrl = 'https://mock-json-service.glitch.me/';
-    final response = await dio.get(jobsListAPIUrl);
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.data);
-      return jsonResponse.map((job) => new Job.fromJson(job)).toList();
-    } else {
-      throw Exception('Failed to load jobs from API');
-    }
   }
 
   getSession() async {
@@ -54,22 +44,19 @@ class _Home_PageState extends State<Home_Page> {
     return;
   }
 
-  Future<List<String>> getData() async {
-    nameData.add("name");
-    nameData.add("name");
-    nameData.add("name");
-    // DEBUG
-    await Future.delayed(const Duration(seconds: 2), () {});
-    return nameData;
-  }
+  update_subject(String subjectID, String title) {
+    setState(() {
+      ApiServices().updateSubject(subjectID, title).then((value) {
+        CommonResponse response = CommonResponse.fromJson(value);
+        if (response.status == 1) {
+          toast_alert.successToast(response.message);
+          Navigator.of(context).pop();
+        } else {
+          toast_alert.errorToast(response.message);
+        }
 
-  get_data() async {
-    ApiServices().getSubjectList2().then((value) {
-      SubjectResponse response = SubjectResponse.fromJson(value);
-
-      print("Loaded Data: " + response.toString());
-
-      return response;
+        //return response.status;
+      });
     });
   }
 
@@ -77,6 +64,8 @@ class _Home_PageState extends State<Home_Page> {
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     var screenWidth = MediaQuery.of(context).size.width;
+
+    final providerData = Provider.of<DataProvider>(context);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -106,31 +95,143 @@ class _Home_PageState extends State<Home_Page> {
                   height: 5,
                 ),
                 Container(
-                  height: screenHeight,
-                  /*child: FutureBuilder<List<Data>>(
+                  height: screenHeight - 150,
+                  child: FutureBuilder<List<Data>>(
                     future: ApiServices().getSubjectList(),
-                    builder: (context,  snapshot) {
+                    builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         List<Data>? data = snapshot.data as List<Data>;
 
-                        return ListView.builder(
-                            itemCount: data.length,
-                            itemBuilder: (context, index) {
-                              return Text(data[index].subTitle.toString());
-                            });
+                        return GridView(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 2,
+                          ),
+                          shrinkWrap: true,
+                          physics: const BouncingScrollPhysics(),
+                          children: List.generate(
+                            data.length,
+                            (index) {
+                              return GridAnimatorWidget(
+                                child: ZoomTapAnimation(
+                                    onTap: () {
+                                      //toast_alert.successToast(data[index].subjectID.toString());
+                                      providerData.receiveIDAndName(
+                                          data[index].subjectID.toString(),
+                                          data[index].subTitle);
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                              '/subject_details_page',
+                                              (Route<dynamic> route) => true);
+                                    },
+                                    onLongTap: () {
+                                      TextEditingController titleController =
+                                          TextEditingController(
+                                              text: data[index].subTitle);
+                                      BuildContext dialogContext;
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          //dialogContext = context;
+                                          return Expanded(
+                                            child: AlertDialog(
+                                              actions: [
+                                                SizedBox(
+                                                  width: screenWidth,
+                                                  child: const Text(
+                                                    "Update Subject",
+                                                    style: TextStyle(
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth,
+                                                  child: TextField(
+                                                    controller: titleController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText: "Subject Title",
+                                                      border:
+                                                          OutlineInputBorder(),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                SizedBox(
+                                                  width: screenWidth,
+                                                  height: 40,
+                                                  child: ElevatedButton(
+                                                    onPressed: () {
+                                                      update_subject(
+                                                          data[index]
+                                                              .subjectID
+                                                              .toString(),
+                                                          titleController.text
+                                                              .toString()
+                                                              .trim());
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            primary: Colors
+                                                                .blueGrey),
+                                                    child: const Text(
+                                                      "Update",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    enableLongTapRepeatEvent: false,
+                                    longTapRepeatDuration:
+                                        const Duration(milliseconds: 100),
+                                    begin: 1.0,
+                                    end: 0.93,
+                                    beginDuration:
+                                        const Duration(milliseconds: 20),
+                                    endDuration:
+                                        const Duration(milliseconds: 120),
+                                    beginCurve: Curves.decelerate,
+                                    endCurve: Curves.fastOutSlowIn,
+                                    child: Card(
+                                      semanticContainer: true,
+                                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                                      color: Colors.blueGrey,
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15),
+                                          child: Text(
+                                            data[index].subTitle.toString(),
+                                            style: const TextStyle(
+                                                overflow: TextOverflow.ellipsis,
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                    )),
+                              );
+                            },
+                          ),
+                        );
                       } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      }
-                      return CircularProgressIndicator();
-                    },
-                  ),*/
-                  child: FutureBuilder<List<Job>>(
-                    future: ApiServices().fetchJobs(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        List<Job> data = snapshot.data as List<Job>;
-                        return _jobsListView(data);
-                      } else if (snapshot.hasError) {
+                        print("${snapshot.error}");
                         return Text("${snapshot.error}");
                       }
                       return const CircularProgressIndicator();
@@ -156,15 +257,6 @@ class _Home_PageState extends State<Home_Page> {
       drawer: const NavigationDrawer(),
     );
   }
-}
-
-ListView _jobsListView(data) {
-  return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return Text(data[index].position,
-            semanticsLabel: data[index].company.toString());
-      });
 }
 
 class NavigationDrawer extends StatelessWidget {

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mcq/API/Api_services.dart';
+import 'package:mcq/Model/Common/Common_response.dart';
 import 'package:mcq/Toast/Toast_alert.dart';
 import 'package:intl/intl.dart';
 
@@ -13,7 +15,7 @@ class Add_subject_page extends StatefulWidget {
 }
 
 getCurrentDate() {
-  return DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now());
+  return DateFormat('yyyy-MM-dd hh:mm').format(DateTime.now());
 }
 
 class _Add_subject_pageState extends State<Add_subject_page> {
@@ -45,7 +47,7 @@ class _Add_subject_pageState extends State<Add_subject_page> {
                     width: screenWidth,
                     child: TextField(
                       controller: titleController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: "Title", border: OutlineInputBorder()),
                     ),
                   ),
@@ -61,23 +63,35 @@ class _Add_subject_pageState extends State<Add_subject_page> {
                         onPressed: () {
                           var title = titleController.text.toString().trim();
 
-                          var now = new DateTime.now();
-                          var formatter = new DateFormat('yyyy-MM-dd kk:mm').format(DateTime.now());
-                          String formattedDate = getCurrentDate();
+                          var formatter = DateFormat('yyyy-MM-dd hh:mm a')
+                              .format(DateTime.now());
 
-                          if(title == ""){
+                          if (title == "") {
                             toast_alert.errorToast("empty value");
-                          }else{
-                            toast_alert.successToast(formattedDate);
+                          } else {
+                            //toast_alert.successToast(formatter);
+                            setState(() {
+                              CommonResponse commonResponse;
+                              ApiServices().addSubject(title).then((value) {
+                                CommonResponse response =
+                                    CommonResponse.fromJson(value);
+
+                                if (response.status == 1) {
+                                  toast_alert.successToast(response.message);
+                                } else {
+                                  toast_alert.errorToast(response.message);
+                                }
+                              });
+                            });
                           }
                         },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.amber,
+                        ),
                         child: const Text(
                           "Submit",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.amber,
                         ),
                       ),
                     ),

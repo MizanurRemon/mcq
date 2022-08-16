@@ -37,15 +37,12 @@ class ApiServices {
     final response =
         await dio.post("${Constants().BASE_URL}/admin/get_subject");
 
-    print(response.toString());
+    //print(response.toString());
 
     if (response.statusCode == 200) {
-      //List<Data> dataResponse = json.decode(response.data);
-
-      List jsonResponse = json.decode(response.data);
-      return jsonResponse.map<Data>((job) => new Data.fromJson(job)).toList();
-
-      //return jsonResponse;
+      List jsonResponse = response.data['data'];
+      //print("data$jsonResponse");
+      return jsonResponse.map((data) => Data.fromJson(data)).toList();
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -55,19 +52,19 @@ class ApiServices {
     }
   }
 
-  Future<Map<String, dynamic>> getSubjectList2() async {
-    final response =
-        await dio.post("${Constants().BASE_URL}/admin/get_subject");
+  Future<Map<String, dynamic>> addSubject(String title) async {
+    //var dio = Dio();
 
+    final response = await dio.post("${Constants().BASE_URL}/admin/add_subject",
+        data: json.encode({'sub_title': title}));
+
+    //Login_response loginResponse = Login_response.fromJson(response.data);
     if (response.statusCode == 200) {
       Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
 
-      //print(data['data'].toString());
-
-      var dataList = data['data'];
-      print(data.toString());
-
       return data;
+      //String responseString = response.body;
+      //successToast(responseString);
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
@@ -76,24 +73,26 @@ class ApiServices {
     }
   }
 
-  Future<List<Job>> fetchJobs() async {
-    final jobsListAPIUrl = 'https://mock-json-service.glitch.me/';
-    final response = await dio.get(jobsListAPIUrl);
+  Future<Map<String, dynamic>> updateSubject(
+      String subjectID, String title) async {
+    //var dio = Dio();
 
+    final response = await dio.post(
+        "${Constants().BASE_URL}/admin/update_subject",
+        data: json.encode({'subjectID': subjectID, 'sub_title': title}));
+
+    //Login_response loginResponse = Login_response.fromJson(response.data);
     if (response.statusCode == 200) {
-      //List jsonResponse = json.decode(response.data);
-      //return jsonResponse.map<Job>((job) => new Job.fromJson(job)).toList();
-      var data = json.decode(response.data);
+      Map<String, dynamic> data = Map<String, dynamic>.from(response.data);
 
-      print(data.toString());
-
-      List<Job> itemList = [];
-      data.map((item) {
-        itemList.add(Job.fromJson(item));
-      }).toList();
-      return itemList;
+      return data;
+      //String responseString = response.body;
+      //successToast(responseString);
     } else {
-      throw Exception('Failed to load jobs from API');
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      //toastAlert.errorToast("error");
+      throw Exception('Failed to create album.');
     }
   }
 }
